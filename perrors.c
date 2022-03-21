@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   perrors.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: min-jo <min-jo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 17:31:42 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/20 21:26:16 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/21 01:35:33 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,10 @@ void	execve_perror(char *argv, t_envp_data *envp_data)
 
 	args = split_perror(argv, ' ', "fail split cmd", &envp_data->pathes);
 	path = find_binary_path(args[0], &envp_data->pathes, &args);
+	// char	**envp = envp_data->envp;//#
+	// int		cnt = -1;//#
+	// while (envp[++cnt])//#
+	// 	dprintf(2, "envp %d: %s\n", cnt, envp[cnt]);//#
 	if (-1 == execve(path, args, envp_data->envp))
 	{
 		perror("fail execve");
