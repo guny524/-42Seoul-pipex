@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:55:36 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/20 21:28:04 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/21 15:55:02 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ pid_t	forkfirst(char *argv, char *infile, int outfd, t_envp_data *envp_data)
 		close(outfd);
 		return (pid);
 	}
-	infilefd = open_perror(infile, O_RDONLY, "open infile", &envp_data->pathes);
+	infilefd = open(infile, O_RDONLY);
+	open_perror(infilefd, "open infile", &envp_data->pathes);
 	dup2_perror(infilefd, STDIN_FILENO, "dup2 infilefd", &envp_data->pathes);
 	dup2_perror(outfd, STDOUT_FILENO, "dup2 outfd", &envp_data->pathes);
 	execve_perror(argv, envp_data);
@@ -53,8 +54,8 @@ pid_t	forklast(char *argv, int infd, char *outfile, t_envp_data *envp_data)
 		close(infd);
 		return (pid);
 	}
-	outfilefd = open_perror(outfile, O_WRONLY | O_CREAT, "open outfile",
-			&envp_data->pathes);
+	outfilefd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0000644);
+	open_perror(outfilefd, "open outfile", &envp_data->pathes);
 	dup2_perror(infd, STDIN_FILENO, "dup2 infd", &envp_data->pathes);
 	dup2_perror(outfilefd, STDOUT_FILENO, "dup2 outfilefd", &envp_data->pathes);
 	execve_perror(argv, envp_data);

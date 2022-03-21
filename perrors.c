@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   perrors.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: min-jo <min-jo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 17:31:42 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/21 01:35:33 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/21 14:59:48 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,14 @@ void	dup2_perror(int fildes, int fildes2, const char *errstr,
 	close(fildes);
 }
 
-int	open_perror(const char *path, int oflag, const char *errstr,
-			char ***free_pathes)
+void	open_perror(int fd, const char *errstr, char ***free_pathes)
 {
-	int	fd;
-
-	fd = open(path, oflag);
 	if (-1 == fd)
 	{
 		perror(errstr);
 		split_free(free_pathes, -1);
 		exit(EX_NOINPUT);
 	}
-	return (fd);
 }
 
 void	execve_perror(char *argv, t_envp_data *envp_data)

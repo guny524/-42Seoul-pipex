@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: min-jo <min-jo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:53:43 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/21 01:14:05 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/21 15:00:23 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ char	**split_perror(char const *s, char c, const char *errstr,
 			char ***free_pathes);
 void	dup2_perror(int fildes, int fildes2, const char *errstr,
 			char ***free_pathes);
-int		open_perror(const char *path, int oflag, const char *errstr,
-			char ***free_pathes);
+void	open_perror(int fd, const char *errstr, char ***free_pathes);
 void	execve_perror(char *argv, t_envp_data *envp_data);
 #endif
