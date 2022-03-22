@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 17:31:42 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/21 18:33:48 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/22 16:55:05 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	fork_perror(char *argv, char ***free_pathes)
 	perror("fork first cmd");
 	if (-1 == write(STDERR_FILENO, argv, ft_strlen(argv)))
 	{
+		perror("write error");
 		split_free(free_pathes, -1);
 		exit(EX_IOERR);
 	}
@@ -30,17 +31,18 @@ void	fork_perror(char *argv, char ***free_pathes)
 	exit(EX_OSERR);
 }
 
-char	**split_perror(char const *s, char c, const char *errstr,
+char	**unquote_perror(char const *s, char c, const char *errstr,
 				char ***free_pathes)
 {
 	char	**str;
 
-	str = ft_split(s, c);
+	str = unquote_split(s, c);
 	if (NULL == str)
 	{
 		perror(errstr);
 		if (-1 == write(STDERR_FILENO, s, ft_strlen(s)))
 		{
+			perror("write error");
 			if (free_pathes)
 				split_free(free_pathes, -1);
 			exit(EX_IOERR);
@@ -55,10 +57,7 @@ char	**split_perror(char const *s, char c, const char *errstr,
 void	dup2_perror(int fildes, int fildes2, const char *errstr,
 				char ***free_pathes)
 {
-	int	ret;
-
-	ret = dup2(fildes, fildes2);
-	if (-1 == ret)
+	if (-1 == dup2(fildes, fildes2))
 	{
 		perror(errstr);
 		split_free(free_pathes, -1);
@@ -82,7 +81,7 @@ void	execve_perror(char *argv, t_envp_data *envp_data)
 	char	**args;
 	char	*path;
 
-	args = split_perror(argv, ' ', "fail split cmd", &envp_data->pathes);
+	args = unquote_perror(argv, ' ', "fail split cmd", &envp_data->pathes);
 	// int		cnt = -1;//#
 	// while (args[++cnt])//#
 	// 	dprintf(2, "args %d: %s\n", cnt, args[cnt]);//#

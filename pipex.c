@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:55:36 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/21 15:55:02 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/22 16:55:51 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,10 @@ int	main(int argc, char *argv[], char *envp[])
 	{
 		if (-1 == write(STDERR_FILENO,
 				"usage : ./pipex infile cmd1 cmd2 outfile", 40))
+		{
+			perror("write error");
 			exit(EX_IOERR);
+		}
 		return (EX_USAGE);
 	}
 	if (-1 == pipe(fds))

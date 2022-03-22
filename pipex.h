@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:53:43 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/21 15:00:23 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/22 17:48:08 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,26 @@ pid_t	forkfirst(char *argv, char *infile, int outfd, t_envp_data *envp_data);
 pid_t	forklast(char *argv, int infd, char *outfile, t_envp_data *envp_data);
 char	*find_binary_path(char *cmd, char ***pathes, char ***free_args);
 char	**getpathes(char *const envp[]);
+
+typedef enum e_state_quote
+{
+	STATE_QUOTE_NORMAL,
+	STATE_QUOTE_CHAR,
+	STATE_QUOTE_SINGLE,
+	STATE_QUOTE_DOUBLE,
+}	t_state_quote;
+/*
+* quote_counter_state.c
+*/
+t_state_quote	state_quote_counter_normal(size_t *cnt, const char *s, char c);
+t_state_quote	state_quote_counter_char(size_t *cnt, const char *s, char c);
+t_state_quote	state_quote_counter_single(size_t *cnt, const char *s);
+t_state_quote	state_quote_counter_double(size_t *cnt, const char *s);
+void			exit_quote_counter_err(t_state_quote state);
+/*
+* quote.c
+*/
+char	**unquote_split(const char *s, char c);
 /*
 * string.c
 */
@@ -37,12 +57,12 @@ char	*ft_strjoin(char const *s1, char const *s2);
 * split.c
 */
 char	**split_free(char ***str, size_t n);
-char	**ft_split(char const *s, char c);
+char	**ft_split(const char *s, char c);
 /*
 * perrors.c
 */
 void	fork_perror(char *argv, char ***free_pathes);
-char	**split_perror(char const *s, char c, const char *errstr,
+char	**unquote_perror(char const *s, char c, const char *errstr,
 			char ***free_pathes);
 void	dup2_perror(int fildes, int fildes2, const char *errstr,
 			char ***free_pathes);
