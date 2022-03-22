@@ -10,19 +10,33 @@ bash test.sh m
 cd ..
 make fclean
 
-# git clone https://github.com/mariadaan/PIPEXaminator.git
-# make
-# cd PIPEXaminator
-# bash all_tests.sh
-# cd ..
-# make fclean
+git clone https://github.com/mariadaan/PIPEXaminator.git
+make
+cd PIPEXaminator
+bash all_tests.sh
+cd ..
+make fclean
 
-# git clone https://github.com/vfurmane/pipex-tester.git
-# cd pipex-tester
-# ./run.sh
-# cd ..
-# make fclean
+git clone https://github.com/vfurmane/pipex-tester.git
+cd pipex-tester
+./run.sh
+cd ..
+make fclean
+
+git clone https://github.com/ael-bekk/PIPEX_TESTER.git
+cd PIPEX_TESTER
+chmod +x tester.sh
+./tester.sh -pe
+# ./tester.sh -a
+cd ..
+make fclean
+
+git clone https://github.com/Yoo0lh/pipex_tester_42.git
+cd pipex_tester_42
+./pipex_tester.sh m
+# ./pipex_tester.sh a
+cd ..
 
 echo "\033[32;1m"FINISHED enter will remove testers and diff results, ctrl + c to check remain"\033[m"
 read $a
-rm -rf pipexMedic PIPEXaminator pipex-tester
+rm -rf pipexMedic PIPEXaminator pipex-tester PIPEX_TESTER pipex_tester_42

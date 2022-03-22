@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:55:36 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/22 21:42:29 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/22 22:35:54 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ char	*find_binary_path(char *cmd, char ***pathes, char ***free_args)
 	int		cnt;
 	char	*path;
 	char	*str;
+	int		ret_errno;
 
 	cnt = -1;
 	while ((*pathes)[++cnt])
@@ -79,10 +80,11 @@ char	*find_binary_path(char *cmd, char ***pathes, char ***free_args)
 			return (str);
 		free(str);
 	}
+	ret_errno = errno;
 	perror("fail find path");
 	split_free(free_args, -1);
 	split_free(pathes, -1);
-	exit(EX_USAGE);
+	exit(ret_errno);
 }
 
 char	**getpathes(char *const envp[])

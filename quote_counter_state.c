@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/22 15:52:38 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/22 21:44:35 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/22 22:36:35 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,15 @@ t_state_quote	state_quote_counter_double(size_t *cnt, const char *s)
 
 void	exit_quote_counter_err(t_state_quote state)
 {
+	int	ret_errno;
+
 	if (STATE_QUOTE_SINGLE == state || STATE_QUOTE_DOUBLE == state)
 	{
 		if (-1 == write(STDERR_FILENO, "quote prase error", 17))
 		{
+			ret_errno = errno;
 			perror("write error");
-			exit(EX_IOERR);
+			exit(ret_errno);
 		}
 		exit(EX_USAGE);
 	}
