@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:55:36 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/22 16:55:51 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/22 21:42:29 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,7 @@ char	*find_binary_path(char *cmd, char ***pathes, char ***free_args)
 		str = ft_strjoin(path, cmd);
 		free(path);
 		if (0 == access(str, X_OK))
-		{
-			// dprintf(2, "path %d: %s\n", cnt, str);//#
-			// int tmp = -1;//#
-			// while ((*free_args)[++tmp])//#
-				// dprintf(2, "args: %s\n", (*free_args)[tmp]);//#
 			return (str);
-		}
 		free(str);
 	}
 	perror("fail find path");
@@ -112,12 +106,8 @@ int	main(int argc, char *argv[], char *envp[])
 
 	if (argc != 5)
 	{
-		if (-1 == write(STDERR_FILENO,
-				"usage : ./pipex infile cmd1 cmd2 outfile", 40))
-		{
-			perror("write error");
-			exit(EX_IOERR);
-		}
+		write_perror(STDERR_FILENO, "usage : ./pipex infile cmd1 cmd2 outfile",
+			40, NULL);
 		return (EX_USAGE);
 	}
 	if (-1 == pipe(fds))

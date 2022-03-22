@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 17:31:42 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/22 16:55:05 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/22 21:39:56 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,31 @@
 #include <sysexits.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include "pipex.h"
 
 void	fork_perror(char *argv, char ***free_pathes)
 {
 	perror("fork first cmd");
-	if (-1 == write(STDERR_FILENO, argv, ft_strlen(argv)))
-	{
-		perror("write error");
-		split_free(free_pathes, -1);
-		exit(EX_IOERR);
-	}
+	write_perror(STDERR_FILENO, argv, ft_strlen(argv), free_pathes);
 	split_free(free_pathes, -1);
 	exit(EX_OSERR);
+}
+
+char	**split_perror(char const *s, char c, const char *errstr,
+				char ***free_pathes)
+{
+	char	**str;
+
+	str = ft_split(s, c);
+	if (NULL == str)
+	{
+		perror(errstr);
+		write_perror(STDERR_FILENO, s, ft_strlen(s), free_pathes);
+		if (free_pathes)
+			split_free(free_pathes, -1);
+		exit(EXIT_FAILURE);
+	}
+	return (str);
 }
 
 char	**unquote_perror(char const *s, char c, const char *errstr,
@@ -40,40 +51,12 @@ char	**unquote_perror(char const *s, char c, const char *errstr,
 	if (NULL == str)
 	{
 		perror(errstr);
-		if (-1 == write(STDERR_FILENO, s, ft_strlen(s)))
-		{
-			perror("write error");
-			if (free_pathes)
-				split_free(free_pathes, -1);
-			exit(EX_IOERR);
-		}
+		write_perror(STDERR_FILENO, s, ft_strlen(s), free_pathes);
 		if (free_pathes)
 			split_free(free_pathes, -1);
 		exit(EXIT_FAILURE);
 	}
 	return (str);
-}
-
-void	dup2_perror(int fildes, int fildes2, const char *errstr,
-				char ***free_pathes)
-{
-	if (-1 == dup2(fildes, fildes2))
-	{
-		perror(errstr);
-		split_free(free_pathes, -1);
-		exit(EXIT_FAILURE);
-	}
-	close(fildes);
-}
-
-void	open_perror(int fd, const char *errstr, char ***free_pathes)
-{
-	if (-1 == fd)
-	{
-		perror(errstr);
-		split_free(free_pathes, -1);
-		exit(EX_NOINPUT);
-	}
 }
 
 void	execve_perror(char *argv, t_envp_data *envp_data)
@@ -82,14 +65,7 @@ void	execve_perror(char *argv, t_envp_data *envp_data)
 	char	*path;
 
 	args = unquote_perror(argv, ' ', "fail split cmd", &envp_data->pathes);
-	// int		cnt = -1;//#
-	// while (args[++cnt])//#
-	// 	dprintf(2, "args %d: %s\n", cnt, args[cnt]);//#
 	path = find_binary_path(args[0], &envp_data->pathes, &args);
-	// char	**envp = envp_data->envp;//#
-	// int		cnt = -1;//#
-	// while (envp[++cnt])//#
-	// 	dprintf(2, "envp %d: %s\n", cnt, envp[cnt]);//#
 	if (-1 == execve(path, args, envp_data->envp))
 	{
 		perror("fail execve");
