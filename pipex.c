@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: min-jo <min-jo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:55:36 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/22 22:35:54 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/23 10:19:05 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ pid_t	forkfirst(char *argv, char *infile, int outfd, t_envp_data *envp_data)
 	pid = fork();
 	if (-1 == pid)
 		fork_perror(argv, &envp_data->pathes);
-	else if (!pid)
+	else if (pid)
 	{
 		close(outfd);
 		return (pid);
@@ -49,7 +49,7 @@ pid_t	forklast(char *argv, int infd, char *outfile, t_envp_data *envp_data)
 	pid = fork();
 	if (-1 == pid)
 		fork_perror(argv, &envp_data->pathes);
-	else if (!pid)
+	else if (pid)
 	{
 		close(infd);
 		return (pid);
@@ -68,7 +68,6 @@ char	*find_binary_path(char *cmd, char ***pathes, char ***free_args)
 	int		cnt;
 	char	*path;
 	char	*str;
-	int		ret_errno;
 
 	cnt = -1;
 	while ((*pathes)[++cnt])
@@ -80,11 +79,11 @@ char	*find_binary_path(char *cmd, char ***pathes, char ***free_args)
 			return (str);
 		free(str);
 	}
-	ret_errno = errno;
-	perror("fail find path");
+	perror("fail find command");
 	split_free(free_args, -1);
 	split_free(pathes, -1);
-	exit(ret_errno);
+	exit(127); // 원래 exec에 실패하면 자식 프로세스가 부모 프로세스에게 127리턴
+	// 그냥 안 되는 경로로 execv 시도해도 됨
 }
 
 char	**getpathes(char *const envp[])
@@ -103,7 +102,7 @@ int	main(int argc, char *argv[], char *envp[])
 	int			fds[2]; // 0: read, 1: write
 	pid_t		first;
 	pid_t		last;
-	int			state;
+	int			status;
 	t_envp_data	envp_data;
 
 	if (argc != 5)
@@ -120,9 +119,12 @@ int	main(int argc, char *argv[], char *envp[])
 	envp_data = (t_envp_data){getpathes(envp), envp};
 	first = forkfirst(argv[2], argv[1], fds[1], &envp_data);
 	last = forklast(argv[3], fds[0], argv[4], &envp_data);
-	waitpid(first, &state, 0);
-	waitpid(last, &state, 0);
+	waitpid(first, &status, 0);
+	waitpid(last, &status, 0);
 	split_free(&envp_data.pathes, -1);
-	// return wpid == pid && WIFEXITED(status) ? WEXITSTATUS(status) : -1;
-	return (state);
+	return (WEXITSTATUS(status));
 }
+// env에 NULL 들어 갔을 때
+// exit 127해야 하는데 계속 0 리턴
+// while문에 안 걸려서 그런 듯
+// getpathes 쯤에서 exit이나 return 하게 만들어야 할 듯
