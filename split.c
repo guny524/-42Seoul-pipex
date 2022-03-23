@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/18 14:25:00 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/22 21:45:00 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/23 13:18:52 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	**split_free(char ***str, size_t n)
 {
 	if (NULL == *str)
 		return (NULL);
-	if (SIZE_MAX == n) // -1 == n
+	if (SIZE_MAX == n)
 	{
 		while ((*str)[++n])
 		{

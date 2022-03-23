@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:55:36 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/23 13:07:29 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/23 13:18:10 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ pid_t	forkfirst(char *argv, char *infile, int fds[2], t_envp_data *envp_data)
 	dup2_perror(fds[1], STDOUT_FILENO, "dup2 outfd", &envp_data->pathes);
 	close(fds[0]);
 	execve_perror(argv, envp_data);
-	dprintf(2, "last never reach");//#
-	return (-1); // never reach
+	return (-1);
 }
 
 pid_t	forklast(char *argv, int fds[2], char *outfile, t_envp_data *envp_data)
@@ -55,8 +54,7 @@ pid_t	forklast(char *argv, int fds[2], char *outfile, t_envp_data *envp_data)
 	dup2_perror(outfilefd, STDOUT_FILENO, "dup2 outfilefd", &envp_data->pathes);
 	close(fds[1]);
 	execve_perror(argv, envp_data);
-	dprintf(2, "last never reach");//#
-	return (-1); // never reach
+	return (-1);
 }
 
 char	*find_binary_path(char *cmd, char ***pathes, char ***free_args,
@@ -83,18 +81,13 @@ char	*find_binary_path(char *cmd, char ***pathes, char ***free_args,
 	perror("fail find command");
 	split_free(free_args, -1);
 	split_free(pathes, -1);
-	exit(127); // 원래 exec에 실패하면 자식 프로세스가 부모 프로세스에게 127리턴
-	// 그냥 안 되는 경로로 execv 시도해도 됨
+	exit(127);
 }
 
 char	**getpathes(char *const envp[])
 {
 	int		cnt;
 
-	// cnt = -1;//#
-	// dprintf(2, "getpathes: %s\n", *envp);//#
-	// while (envp[++cnt])//#
-	// 	dprintf(2, "getpathes: %s\n", envp[cnt]);//#
 	if (NULL == envp || *envp == NULL)
 	{
 		write_perror(STDERR_FILENO, "env is NULL", 11, NULL);
@@ -109,7 +102,7 @@ char	**getpathes(char *const envp[])
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	int			fds[2]; // 0: read, 1: write
+	int			fds[2];
 	pid_t		first;
 	pid_t		last;
 	int			status;
@@ -121,11 +114,7 @@ int	main(int argc, char *argv[], char *envp[])
 			40, NULL);
 		return (EX_USAGE);
 	}
-	if (-1 == pipe(fds))
-	{
-		perror("fail pipe create");
-		return (EX_OSERR);
-	}
+	pipe_perror(fds);
 	envp_data = (t_envp_data){getpathes(envp), envp};
 	first = forkfirst(argv[2], argv[1], fds, &envp_data);
 	last = forklast(argv[3], fds, argv[4], &envp_data);

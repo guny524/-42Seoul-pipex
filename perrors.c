@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 17:31:42 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/23 13:08:09 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/23 13:19:24 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,15 @@ void	fork_perror(char *argv, char ***free_pathes)
 	write_perror(STDERR_FILENO, argv, ft_strlen(argv), free_pathes);
 	split_free(free_pathes, -1);
 	exit(ret_errno);
+}
+
+void	pipe_perror(int fds[2])
+{
+	if (-1 == pipe(fds))
+	{
+		perror("fail pipe create");
+		exit(EX_OSERR);
+	}
 }
 
 char	**split_perror(char const *s, char c, const char *errstr,

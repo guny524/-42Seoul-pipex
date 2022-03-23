@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:53:43 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/23 13:06:44 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/23 13:17:49 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ char			**ft_split(const char *s, char c);
 * perrors.c
 */
 void			fork_perror(char *argv, char ***free_pathes);
+void			pipe_perror(int fds[2]);
 char			**split_perror(char const *s, char c, const char *errstr,
 					char ***free_pathes);
 char			**unquote_perror(char const *s, char c, const char *errstr,

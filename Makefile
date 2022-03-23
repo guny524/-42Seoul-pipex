@@ -6,12 +6,13 @@
 #    By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/11 16:17:45 by min-jo            #+#    #+#              #
-#    Updated: 2022/03/22 21:14:42 by min-jo           ###   ########.fr        #
+#    Updated: 2022/03/23 13:21:44 by min-jo           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		=	pipex
-SRC			=	pipex.c perrors.c io_perrors.c string.c split.c quote.c quote_counter_state.c
+SRC			=	pipex.c perrors.c io_perrors.c string.c split.c quote.c\
+				quote_counter_state.c
 BDRC		=
 OBJ			=	$(SRC:.c=.o)
 BOBJ		=	$(BSRC:.c=.o)
