@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: min-jo <min-jo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:55:36 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/23 10:19:05 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/23 12:10:47 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,15 @@ char	**getpathes(char *const envp[])
 {
 	int		cnt;
 
+	// cnt = -1;//#
+	// dprintf(2, "getpathes: %s\n", *envp);//#
+	// while (envp[++cnt])//#
+	// 	dprintf(2, "getpathes: %s\n", envp[cnt]);//#
+	if (NULL == envp || *envp == NULL)
+	{
+		write_perror(STDERR_FILENO, "env is NULL", 11, NULL);
+		exit(EXIT_FAILURE);
+	}
 	cnt = -1;
 	while (envp[++cnt])
 		if (0 == ft_strncmp(envp[cnt], "PATH=", 5))
@@ -124,7 +133,3 @@ int	main(int argc, char *argv[], char *envp[])
 	split_free(&envp_data.pathes, -1);
 	return (WEXITSTATUS(status));
 }
-// env에 NULL 들어 갔을 때
-// exit 127해야 하는데 계속 0 리턴
-// while문에 안 걸려서 그런 듯
-// getpathes 쯤에서 exit이나 return 하게 만들어야 할 듯
