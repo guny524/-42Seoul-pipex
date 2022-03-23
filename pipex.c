@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:55:36 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/23 12:10:47 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/23 13:07:29 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <fcntl.h>
 #include "pipex.h"
 
-pid_t	forkfirst(char *argv, char *infile, int outfd, t_envp_data *envp_data)
+pid_t	forkfirst(char *argv, char *infile, int fds[2], t_envp_data *envp_data)
 {
 	pid_t	pid;
 	int		infilefd;
@@ -28,20 +28,18 @@ pid_t	forkfirst(char *argv, char *infile, int outfd, t_envp_data *envp_data)
 	if (-1 == pid)
 		fork_perror(argv, &envp_data->pathes);
 	else if (pid)
-	{
-		close(outfd);
 		return (pid);
-	}
 	infilefd = open(infile, O_RDONLY);
 	open_perror(infilefd, "open infile", &envp_data->pathes);
 	dup2_perror(infilefd, STDIN_FILENO, "dup2 infilefd", &envp_data->pathes);
-	dup2_perror(outfd, STDOUT_FILENO, "dup2 outfd", &envp_data->pathes);
+	dup2_perror(fds[1], STDOUT_FILENO, "dup2 outfd", &envp_data->pathes);
+	close(fds[0]);
 	execve_perror(argv, envp_data);
 	dprintf(2, "last never reach");//#
 	return (-1); // never reach
 }
 
-pid_t	forklast(char *argv, int infd, char *outfile, t_envp_data *envp_data)
+pid_t	forklast(char *argv, int fds[2], char *outfile, t_envp_data *envp_data)
 {
 	pid_t	pid;
 	int		outfilefd;
@@ -50,30 +48,33 @@ pid_t	forklast(char *argv, int infd, char *outfile, t_envp_data *envp_data)
 	if (-1 == pid)
 		fork_perror(argv, &envp_data->pathes);
 	else if (pid)
-	{
-		close(infd);
 		return (pid);
-	}
 	outfilefd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0000644);
 	open_perror(outfilefd, "open outfile", &envp_data->pathes);
-	dup2_perror(infd, STDIN_FILENO, "dup2 infd", &envp_data->pathes);
+	dup2_perror(fds[0], STDIN_FILENO, "dup2 infd", &envp_data->pathes);
 	dup2_perror(outfilefd, STDOUT_FILENO, "dup2 outfilefd", &envp_data->pathes);
+	close(fds[1]);
 	execve_perror(argv, envp_data);
 	dprintf(2, "last never reach");//#
 	return (-1); // never reach
 }
 
-char	*find_binary_path(char *cmd, char ***pathes, char ***free_args)
+char	*find_binary_path(char *cmd, char ***pathes, char ***free_args,
+				int *join_free)
 {
 	int		cnt;
 	char	*path;
 	char	*str;
 
+	*join_free = 0;
+	if (0 == access(cmd, X_OK))
+		return (cmd);
 	cnt = -1;
 	while ((*pathes)[++cnt])
 	{
 		path = ft_strjoin((*pathes)[cnt], "/");
 		str = ft_strjoin(path, cmd);
+		*join_free = 1;
 		free(path);
 		if (0 == access(str, X_OK))
 			return (str);
@@ -126,8 +127,10 @@ int	main(int argc, char *argv[], char *envp[])
 		return (EX_OSERR);
 	}
 	envp_data = (t_envp_data){getpathes(envp), envp};
-	first = forkfirst(argv[2], argv[1], fds[1], &envp_data);
-	last = forklast(argv[3], fds[0], argv[4], &envp_data);
+	first = forkfirst(argv[2], argv[1], fds, &envp_data);
+	last = forklast(argv[3], fds, argv[4], &envp_data);
+	close(fds[0]);
+	close(fds[1]);
 	waitpid(first, &status, 0);
 	waitpid(last, &status, 0);
 	split_free(&envp_data.pathes, -1);

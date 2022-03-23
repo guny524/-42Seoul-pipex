@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 18:53:43 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/22 21:41:39 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/23 13:06:44 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,12 @@ typedef enum e_state_quote
 /*
 * pipex.c
 */
-pid_t			forkfirst(char *argv, char *infile, int outfd,
+pid_t			forkfirst(char *argv, char *infile, int fds[2],
 					t_envp_data *envp_data);
-pid_t			forklast(char *argv, int infd, char *outfile,
+pid_t			forklast(char *argv, int fds[2], char *outfile,
 					t_envp_data *envp_data);
-char			*find_binary_path(char *cmd, char ***pathes, char ***free_args);
+char			*find_binary_path(char *cmd, char ***pathes, char ***free_args,
+					int *join_free);
 char			**getpathes(char *const envp[]);
 /*
 * quote_counter_state.c

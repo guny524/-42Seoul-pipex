@@ -6,7 +6,7 @@
 /*   By: min-jo <min-jo@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 17:31:42 by min-jo            #+#    #+#             */
-/*   Updated: 2022/03/22 22:35:18 by min-jo           ###   ########.fr       */
+/*   Updated: 2022/03/23 13:08:09 by min-jo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,16 +71,18 @@ void	execve_perror(char *argv, t_envp_data *envp_data)
 	char	**args;
 	char	*path;
 	int		ret_errno;
+	int		join_free;
 
 	args = unquote_perror(argv, ' ', "fail split cmd", &envp_data->pathes);
-	path = find_binary_path(args[0], &envp_data->pathes, &args);
+	path = find_binary_path(args[0], &envp_data->pathes, &args, &join_free);
 	if (-1 == execve(path, args, envp_data->envp))
 	{
 		ret_errno = errno;
 		perror("fail execve");
 		split_free(&args, -1);
 		split_free(&envp_data->pathes, -1);
-		free(path);
+		if (join_free)
+			free(path);
 		exit(ret_errno);
 	}
 }
